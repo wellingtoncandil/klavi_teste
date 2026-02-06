@@ -13,7 +13,8 @@ function(req, res) {
 
   json <- jsonlite::fromJSON(req$postBody, simplifyVector = FALSE)
 
-  # trate aqui
+  # trate os dados aqui
+
   res$status <- 200
   list(status = "received")
 }
