@@ -1,5 +1,8 @@
 FROM rocker/r-ver:4.3.2
 
+# quebra cache do docker (IMPORTANTE)
+RUN echo "FORCE_REBUILD_2026_02_07"
+
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # TOOLCHAIN DE COMPILAÇÃO (ESSENCIAL)
 RUN apt-get update && apt-get install -y \
