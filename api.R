@@ -1,43 +1,30 @@
 library(plumber)
 library(jsonlite)
 
-# ---------------------------
-# Health check GET
-# ---------------------------
+# health
 #' @get /
 function(){
-  list(status = "online")
+  list(status="online")
 }
 
-# ---------------------------
-# HANDSHAKE DA KLAVI (ESSENCIAL)
-# ---------------------------
+# handshake klavi
 #' @post /
 function(req, res){
-
-  cat("Handshake recebido da Klavi\n")
-
-  # alguns provedores exigem 200 sem processamento
+  cat("KLAVI HANDSHAKE\n")
   res$status <- 200
-  list(status="ok")
+  list(ok=TRUE)
 }
 
-# ---------------------------
-# WEBHOOK REAL
-# ---------------------------
+# webhook real
 #' @post /webhook/klavi
 function(req, res){
 
+  cat("WEBHOOK RECEBIDO\n")
   raw <- req$postBody
-
-  cat("Webhook real recebido\n")
   cat(raw, "\n")
 
-  data <- jsonlite::fromJSON(raw, simplifyVector = FALSE)
-
-  file_name <- paste0("/tmp/klavi_", Sys.time(), ".json")
-  write(raw, file = file_name)
+  write(raw, paste0("/tmp/klavi_", Sys.time(), ".json"))
 
   res$status <- 200
-  list(status="received")
+  list(received=TRUE)
 }
