@@ -1,26 +1,27 @@
 FROM rocker/r-ver:4.3.2
 
-# quebra cache do docker (IMPORTANTE)
-RUN echo "FORCE_REBUILD_2026_02_07"
-
-# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# TOOLCHAIN DE COMPILAÇÃO (ESSENCIAL)
+# ---- dependências de sistema necessárias pro plumber ----
 RUN apt-get update && apt-get install -y \
     build-essential \
     gcc \
     g++ \
     make \
-    libcurl4-openssl-dev \
+    pkg-config \
+    libsodium-dev \
     libssl-dev \
+    libcurl4-openssl-dev \
     libxml2-dev \
+    zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-# Library global
+# library global
 RUN mkdir -p /usr/local/lib/R/site-library
 RUN chmod -R 777 /usr/local/lib/R/site-library
 
-# Instala pacotes (agora vai compilar de verdade)
+# instalar pacotes R
+RUN Rscript -e "install.packages(c('Rcpp','later','promises'), repos='https://cloud.r-project.org', Ncpus=2, lib='/usr/local/lib/R/site-library')"
+RUN Rscript -e "install.packages('httpuv', repos='https://cloud.r-project.org', Ncpus=2, lib='/usr/local/lib/R/site-library')"
+RUN Rscript -e "install.packages('sodium', repos='https://cloud.r-project.org', Ncpus=2, lib='/usr/local/lib/R/site-library')"
 RUN Rscript -e "install.packages('plumber', repos='https://cloud.r-project.org', Ncpus=2, lib='/usr/local/lib/R/site-library')"
 RUN Rscript -e "install.packages('jsonlite', repos='https://cloud.r-project.org', Ncpus=2, lib='/usr/local/lib/R/site-library')"
 
@@ -30,3 +31,4 @@ COPY . /app
 EXPOSE 8000
 
 CMD ["Rscript", "start.R"]
+
